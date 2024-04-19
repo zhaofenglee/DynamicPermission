@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "JS.Abp.DynamicPermission": {
+      "path": "JS.Abp.DynamicPermission.abpmdl"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+using JS.Abp.DynamicPermission.PermissionDefinitions;
+using Xunit;
+
+namespace JS.Abp.DynamicPermission.EntityFrameworkCore.Applications.PermissionDefinitions;
+
+public class EfCorePermissionDefinitionsAppServiceTests : PermissionDefinitionsAppServiceTests<DynamicPermissionEntityFrameworkCoreTestModule>
+{
+}

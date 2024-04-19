@@ -1,0 +1,51 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using JS.Abp.DynamicPermission.Localization
+@using JS.Abp.DynamicPermission.Web.Pages.DynamicPermission.PermissionDefinitions
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using JS.Abp.DynamicPermission.PermissionDefinitions;
+@using System.Globalization
+@inject IHtmlLocalizer<DynamicPermissionResource> L
+@model EditModalModel
+@{
+    Layout = null;
+}
+
+<form data-ajaxForm="true" asp-page="/DynamicPermission/PermissionDefinitions/EditModal" autocomplete="off">
+    <abp-modal id="PermissionDefinitionEditModal">
+        <abp-modal-header title="@L["Update"].Value"></abp-modal-header>
+
+        <abp-modal-body>
+
+                    <abp-input asp-for="Id" />
+                    
+                    <abp-input asp-for="PermissionDefinition.ConcurrencyStamp" hidden="true" suppress-label="true"/>
+                    
+
+            <abp-input asp-for="PermissionDefinition.GroupName"   />
+
+            <abp-input asp-for="PermissionDefinition.ParentName"   />
+            
+            
+            <abp-input asp-for="PermissionDefinition.Name"   />
+
+
+            
+
+
+            <abp-input asp-for="PermissionDefinition.DisplayName"   />
+
+
+            <abp-input asp-for="PermissionDefinition.IsEnabled"   />
+
+                    
+                
+
+
+        </abp-modal-body>
+
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)">
+
+        </abp-modal-footer>
+    </abp-modal>
+</form>

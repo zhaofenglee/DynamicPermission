@@ -1,0 +1,357 @@
+@page "/DynamicPermission/PermissionDefinitions"
+
+
+
+@attribute [Authorize]
+@using global::JS.Abp.DynamicPermission.PermissionDefinitions
+@using global::JS.Abp.DynamicPermission.Localization
+@using global::JS.Abp.DynamicPermission.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+
+@using global::JS.Abp.DynamicPermission.Permissions
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Http.Client
+@inherits DynamicPermissionComponentBase
+@inject IPermissionDefinitionsAppService PermissionDefinitionsAppService
+
+@inject IUiMessageService UiMessageService
+@inject AbpBlazorMessageLocalizerHelper<DynamicPermissionResource> LH
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["PermissionDefinitions"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+
+        <Form id="PermissionDefinitionSearchForm" class="mb-3">
+            <Addons>
+                <Addon AddonType="AddonType.Body">
+                    <TextEdit @bind-Text="@Filter.FilterText"
+                              Autofocus="true"
+                              Placeholder="@L["Search"]">
+                    </TextEdit>
+                </Addon>
+                <Addon AddonType="AddonType.End">
+                    <SubmitButton Form="PermissionDefinitionSearchForm" Clicked="GetPermissionDefinitionsAsync">
+                        <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                    </SubmitButton>
+                </Addon>
+            </Addons>
+        </Form>
+        
+        <Row Class="mt-3 mb-3"> 
+            <div class="col-md-12">
+                <a href="javascript:;" class="text-decoration-none" @onclick="() => ShowAdvancedFilters = !ShowAdvancedFilters">@L["SeeAdvancedFilters"]</a>
+            </div>
+        </Row>
+        
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["GroupName"]</FieldLabel>
+                        <TextEdit Text="@Filter.GroupName" TextChanged="@OnGroupNameChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["ParentName"]</FieldLabel>
+                        <TextEdit Text="@Filter.ParentName" TextChanged="@OnParentNameChangedAsync" />
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Name"]</FieldLabel>
+                        <TextEdit Text="@Filter.Name" TextChanged="@OnNameChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["DisplayName"]</FieldLabel>
+                        <TextEdit Text="@Filter.DisplayName" TextChanged="@OnDisplayNameChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["IsEnabled"]</FieldLabel>
+                        <Select TValue="bool?"
+		SelectedValue="@Filter.IsEnabled"
+		SelectedValueChanged="@OnIsEnabledChangedAsync">
+
+<SelectItem></SelectItem>
+<SelectItem Value="true">@L["Yes"]</SelectItem>
+<SelectItem Value="false">@L["No"]</SelectItem>
+
+</Select>                       
+                    </Field>
+                </Column>
+            </Row>
+
+        </div>
+
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>
+        <DataGrid TItem="PermissionDefinitionDto"
+                  Data="PermissionDefinitionList"
+                  
+                  
+                  
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <DataGridColumns>
+                
+                <DataGridEntityActionsColumn TItem="PermissionDefinitionDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="PermissionDefinitionDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="PermissionDefinitionDto"
+                                          Visible="@CanEditPermissionDefinition"
+                                          Clicked="async () => await OpenEditPermissionDefinitionModalAsync(context)"
+                                          Text="@L["Edit"]"></EntityAction>
+                            <EntityAction TItem="PermissionDefinitionDto"
+                                          Visible="@CanDeletePermissionDefinition"
+                                          Clicked="() => DeletePermissionDefinitionAsync(context)"
+                                          ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"
+                                          Text="@L["Delete"]"></EntityAction>
+
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+               
+                <DataGridColumn TItem="PermissionDefinitionDto"
+                                Field="GroupName"
+                                Caption="@L["GroupName"]">
+                </DataGridColumn>
+                
+                <DataGridColumn TItem="PermissionDefinitionDto"
+                                Field="ParentName"
+                                Caption="@L["ParentName"]">
+                </DataGridColumn>
+                
+
+              <DataGridColumn TItem="PermissionDefinitionDto"
+                      Field="Name"
+                      Caption="@L["Name"]">
+              </DataGridColumn>
+                
+              <DataGridColumn TItem="PermissionDefinitionDto"
+                      Field="DisplayName"
+                      Caption="@L["DisplayName"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="PermissionDefinitionDto"
+                      Field="IsEnabled"
+                      Caption="@L["IsEnabled"]">
+                    <DisplayTemplate>
+                        @if (context.IsEnabled)
+                        {
+                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                        }
+                        else
+                        {
+                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                        }
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+            </DataGridColumns>
+            
+            
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@* ************************* CREATE MODAL ************************* *@
+<Modal @ref="CreatePermissionDefinitionModal" Closing="@CreatePermissionDefinitionModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+
+        <Form id="CreatePermissionDefinitionForm">
+            <ModalHeader>
+                <ModalTitle>@L["NewPermissionDefinition"]</ModalTitle>
+                <CloseButton Clicked="CloseCreatePermissionDefinitionModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@NewPermissionDefinitionValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@NewPermissionDefinition"
+                            ValidateOnLoad="false">
+                     
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["GroupName"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewPermissionDefinition.GroupName" MaxLength="PermissionDefinitionConsts.GroupNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ParentName"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewPermissionDefinition.ParentName" MaxLength="PermissionDefinitionConsts.ParentNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewPermissionDefinition.Name" MaxLength="PermissionDefinitionConsts.NameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["DisplayName"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewPermissionDefinition.DisplayName" MaxLength="PermissionDefinitionConsts.DisplayNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@NewPermissionDefinition.IsEnabled" >@L["IsEnabled"]</Check>
+                    </Field>
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreatePermissionDefinitionModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="CreatePermissionDefinitionForm" Clicked="CreatePermissionDefinitionAsync" />
+
+            </ModalFooter>
+        </Form>
+
+    </ModalContent>
+</Modal>
+
+@* ************************* EDIT MODAL ************************* *@
+<Modal @ref="EditPermissionDefinitionModal" Closing="@EditPermissionDefinitionModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+
+        <Form id="EditPermissionDefinitionForm">
+            <ModalHeader>
+                <ModalTitle>@L["Update"]</ModalTitle>
+                <CloseButton Clicked="CloseEditPermissionDefinitionModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditingPermissionDefinitionValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@EditingPermissionDefinition"
+                            ValidateOnLoad="false">
+                     
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["GroupName"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingPermissionDefinition.GroupName" MaxLength="PermissionDefinitionConsts.GroupNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ParentName"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingPermissionDefinition.ParentName" MaxLength="PermissionDefinitionConsts.ParentNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingPermissionDefinition.Name" MaxLength="PermissionDefinitionConsts.NameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["DisplayName"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingPermissionDefinition.DisplayName" MaxLength="PermissionDefinitionConsts.DisplayNameMaxLength" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@EditingPermissionDefinition.IsEnabled" >@L["IsEnabled"]</Check>
+                    </Field>
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditPermissionDefinitionModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="EditPermissionDefinitionForm" Clicked="UpdatePermissionDefinitionAsync" />
+
+            </ModalFooter>
+        </Form>
+
+    </ModalContent>
+</Modal>
+

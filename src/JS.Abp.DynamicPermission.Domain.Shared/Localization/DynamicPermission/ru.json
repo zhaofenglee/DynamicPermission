@@ -1,0 +1,7 @@
+{
+  "culture": "ru",
+  "texts": {
+    "SamplePageMessage": "Пример страницы для модуля DynamicPermission",
+    "Menu:DynamicPermission": "DynamicPermission"
+  }
+}

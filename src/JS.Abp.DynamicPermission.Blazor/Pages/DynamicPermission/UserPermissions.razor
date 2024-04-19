@@ -1,0 +1,202 @@
+@page "/DynamicPermission/UserPermissions"
+
+
+
+@attribute [Authorize("AbpIdentity.Users")]
+@using global::JS.Abp.DynamicPermission.Localization
+@using global::JS.Abp.DynamicPermission.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+@using global::JS.Abp.DynamicPermission.Permissions
+@using JS.Abp.DynamicPermission.UserPermissions
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.AspNetCore.Components.Web
+@using Volo.Abp.Http.Client
+@inherits DynamicPermissionComponentBase
+@inject IUserPermissionAppService UserPermissionAppService
+@inject IUiMessageService UiMessageService
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["UserPermissions"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+        <Form id="PermissionExtraSearchForm" class="mb-3">
+            <Addons>
+                <Addon AddonType="AddonType.Body">
+                    <TextEdit @bind-Text="@Filter.FilterText"
+                              Autofocus="true"
+                              Placeholder="@L["Search"]">
+                    </TextEdit>
+                </Addon>
+                <Addon AddonType="AddonType.End">
+                    <SubmitButton Form="PermissionExtraSearchForm" Clicked="GetUserPermissionExtrasAsync">
+                        <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                    </SubmitButton>
+                </Addon>
+            </Addons>
+        </Form>
+        <Row Class="mt-3 mb-3">
+            <div class="col-md-12">
+                <a href="javascript:;" class="text-decoration-none" @onclick="() => ShowAdvancedFilters = !ShowAdvancedFilters">@L["SeeAdvancedFilters"]</a>
+            </div>
+        </Row>
+
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["GroupName"]</FieldLabel>
+                        <TextEdit Text="@Filter.GroupName" TextChanged="@OnGroupNameChangedAsync" />
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["PermissionName"]</FieldLabel>
+                        <TextEdit Text="@Filter.PermissionName" TextChanged="@OnPermissionNameChangedAsync" />
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["UserName"]</FieldLabel>
+                        <TextEdit Text="@Filter.UserName" TextChanged="@OnUserNameChangedAsync" />
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["IsActive"]</FieldLabel>
+                        <Select TValue="bool?"
+                                SelectedValue="@Filter.IsActive"
+                                SelectedValueChanged="@OnIsActiveChangedAsync">
+
+                            <SelectItem></SelectItem>
+                            <SelectItem Value="true">@L["Yes"]</SelectItem>
+                            <SelectItem Value="false">@L["No"]</SelectItem>
+
+                        </Select>
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["IsGranted"]</FieldLabel>
+                        <Select TValue="bool?"
+                                SelectedValue="@Filter.IsGranted"
+                                SelectedValueChanged="@OnIsGrantedChangedAsync">
+
+                            <SelectItem></SelectItem>
+                            <SelectItem Value="true">@L["Yes"]</SelectItem>
+                            <SelectItem Value="false">@L["No"]</SelectItem>
+
+                        </Select>
+                    </Field>
+                </Column>
+            </Row>
+
+        </div>
+        
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>
+        <DataGrid TItem="UserPermissionDto"
+                  Data="UserPermissionList"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="false"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <DataGridColumns>
+
+                @* <DataGridColumn TItem="PermissionExtraDto" *@
+              @*         Field="GroupName" *@
+              @*         Caption="@L["GroupName"]"> *@
+              @* </DataGridColumn> *@
+
+              <DataGridColumn TItem="UserPermissionDto"
+                      Field="UserName"
+                      Caption="@L["UserName"]">
+              </DataGridColumn>
+
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="Surname"
+                                Caption="@L["Surname"]">
+                </DataGridColumn>
+                
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="IsActive"
+                                Caption="@L["IsActive"]">
+                    <DisplayTemplate>
+                        @if (context.IsActive.HasValue && (bool)context.IsActive)
+                        {
+                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                        }
+                        else
+                        {
+                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                        }
+                    </DisplayTemplate>
+                </DataGridColumn>
+                
+
+              <DataGridColumn TItem="UserPermissionDto"
+                      Field="Email"
+                      Caption="@L["Email"]">
+              </DataGridColumn>
+
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="PhoneNumber"
+                                Caption="@L["PhoneNumber"]">
+                </DataGridColumn>
+                
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="GroupName"
+                                Caption="@L["GroupName"]">
+                </DataGridColumn>
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="PermissionName"
+                                Caption="@L["PermissionName"]">
+                </DataGridColumn>
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="PermissionDisplayName"
+                                Caption="@L["PermissionDisplayName"]">
+                </DataGridColumn>
+               
+                <DataGridColumn TItem="UserPermissionDto"
+                                Field="IsGranted"
+                                Caption="@L["IsGranted"]">
+                    <DisplayTemplate>
+                        @if (context.IsGranted)
+                        {
+                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                        }
+                        else
+                        {
+                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                        }
+                    </DisplayTemplate>
+                </DataGridColumn>
+                
+                
+
+
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>

@@ -1,0 +1,92 @@
+@page
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using JS.Abp.DynamicPermission.Permissions
+@using JS.Abp.DynamicPermission.Web.Pages.DynamicPermission.PermissionDefinitions
+@using JS.Abp.DynamicPermission.Web.Menus
+@using Microsoft.AspNetCore.Mvc.Localization
+@using JS.Abp.DynamicPermission.Localization
+@inject IHtmlLocalizer<DynamicPermissionResource> L
+@inject IAuthorizationService Authorization
+@model IndexModel
+@inject IPageLayout PageLayout
+@{
+    PageLayout.Content.Title = L["PermissionDefinitions"].Value;
+    PageLayout.Content.MenuItemName = DynamicPermissionMenus.PermissionDefinitions;
+}
+
+@section styles
+{
+
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/DynamicPermission/PermissionDefinitions/index.js" />
+
+}
+
+@section content_toolbar {
+    <abp-button id="ExportToExcelButton" text="@L["ExportToExcel"].Value" icon="download" size="Small" button-type="Primary" />
+    @if (await Authorization.IsGrantedAsync(DynamicPermissionPermissions.PermissionDefinitions.Create))
+    {
+        <abp-button id="NewPermissionDefinitionButton" text="@L["NewPermissionDefinition"].Value" icon="plus" size="Small" button-type="Primary" />
+    }
+
+}
+
+
+
+<abp-card>
+    <abp-card-body>
+		<abp-row class="mb-3">
+            <abp-column size-md="_12">
+                <form id="SearchForm" autocomplete="off">
+                    <div class="input-group">
+                        <input class="form-control page-search-filter-text" id="FilterText" placeholder="@L["Search"]"/>
+                        <abp-button button-type="Primary" type="submit" icon="search"/>
+                    </div>
+                </form>
+            </abp-column>
+            <abp-column size-md="_12" class="mt-3">
+                <a href="javascript:;" id="AdvancedFilterSectionToggler" class="text-decoration-none">@L["SeeAdvancedFilters"]</a>
+            </abp-column>
+        </abp-row>
+
+        <abp-row id="AdvancedFilterSection" style="display: none;">
+            <abp-column size="_3">
+                <abp-input asp-for="GroupNameFilter" label="@L["GroupName"].Value" />
+            </abp-column>
+            <abp-column size="_3">
+                <abp-input asp-for="ParentNameFilter" label="@L["ParentName"].Value" />
+            </abp-column>
+            <abp-column size="_3">
+                <abp-input asp-for="NameFilter" label="@L["Name"].Value" />
+            </abp-column>
+            <abp-column size="_3">
+                <abp-input asp-for="DisplayNameFilter" label="@L["DisplayName"].Value" />
+            </abp-column>
+            <abp-column size="_3">
+                <abp-select asp-for="IsEnabledFilter" label="@L["IsEnabled"].Value" />
+            </abp-column>
+
+        </abp-row>
+
+        <abp-table striped-rows="true" id="PermissionDefinitionsTable">
+            <thead>
+				<tr>
+				    
+					<th>@L["Actions"]</th>
+                    <th>@L["GroupName"]</th>
+                    <th>@L["ParentName"]</th>
+					<th>@L["Name"]</th>
+					<th>@L["DisplayName"]</th>
+					<th>@L["IsEnabled"]</th>
+
+
+				</tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+

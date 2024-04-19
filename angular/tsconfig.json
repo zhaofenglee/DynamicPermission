@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "paths": {
+      "@j-s.Abp/dynamic-permission": [
+        "projects/dynamic-permission/src/public-api.ts"
+      ],
+      "@j-s.Abp/dynamic-permission/config": [
+        "projects/dynamic-permission/config/src/public-api.ts"
+      ],
+      "@proxy": ["projects/dynamic-permission/src/lib/proxy/index.ts"],
+      "@proxy/*": ["projects/dynamic-permission/src/lib/proxy/*"]
+    }
+  }
+}

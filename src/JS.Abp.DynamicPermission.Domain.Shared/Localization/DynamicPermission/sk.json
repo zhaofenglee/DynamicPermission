@@ -1,0 +1,7 @@
+{
+  "culture": "sk",
+  "texts": {
+    "SamplePageMessage": "Ukážka stránky pre modul DynamicPermission",
+    "Menu:DynamicPermission": "DynamicPermission"
+  }
+}
