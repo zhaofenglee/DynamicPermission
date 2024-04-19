@@ -1,5 +1,9 @@
 ﻿# DynamicPermission
 
+![img.png](/docs/images/img.png)
+
+![img2.png](/docs/images/img2.png)
+
 ## Getting Started
 
 ### 1.Install the following NuGet packages.
