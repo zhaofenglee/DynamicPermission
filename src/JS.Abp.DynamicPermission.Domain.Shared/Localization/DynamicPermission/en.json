@@ -41,6 +41,8 @@
     "PermissionName": "Permission Name",
     "PermissionDisplayName": "Permission Display Name",
     "IsGranted": "Is Granted",
-    "UserName": "User Name"
+    "UserName": "User Name",
+    "Menu:UserPermissions": "User Permissions",
+    "UserPermissions": "User Permissions"
   }
 }
