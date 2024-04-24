@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Http.Client" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.Http.Client" Version="$(VoloAbpPackageVersion)" />
     <ProjectReference Include="..\JS.Abp.DynamicPermission.Application.Contracts\JS.Abp.DynamicPermission.Application.Contracts.csproj" />
   </ItemGroup>
 
