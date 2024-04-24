@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.Caching" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain" Version="$(VoloAbpPackageVersion)" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(VoloAbpPackageVersion)" />
+    <PackageReference Include="Volo.Abp.Caching" Version="$(VoloAbpPackageVersion)" />
     <ProjectReference Include="..\JS.Abp.DynamicPermission.Domain.Shared\JS.Abp.DynamicPermission.Domain.Shared.csproj" />
   </ItemGroup>
 
