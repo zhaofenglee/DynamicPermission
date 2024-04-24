@@ -9,9 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Volo.Abp.AutoMapper" Version="8.0.5" />
-        <PackageReference Include="Volo.Abp.AspNetCore.Components.Web.Theming" Version="8.0.5" />
-        <PackageReference Include="Volo.Abp.RemoteServices" Version="8.0.5" />
+        <PackageReference Include="Volo.Abp.AutoMapper" Version="$(VoloAbpPackageVersion)" />
+        <PackageReference Include="Volo.Abp.AspNetCore.Components.Web.Theming" Version="$(VoloAbpPackageVersion)" />
+        <PackageReference Include="Volo.Abp.RemoteServices" Version="$(VoloAbpPackageVersion)" />
     </ItemGroup>
 
     <ItemGroup>
