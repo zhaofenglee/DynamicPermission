@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
@@ -38,7 +39,7 @@ public class DynamicPermissionDefinitionHandler: ILocalEventHandler<EntityChange
             }
 
             await _permissionDefinitionRecordRepository.InsertAsync(new PermissionDefinitionRecord(
-                _guidGenerator.Create(), eventData.Entity.GroupName, eventData.Entity.Name, eventData.Entity.ParentName,
+                _guidGenerator.Create(), eventData.Entity.GroupName, eventData.Entity.Name,  eventData.Entity.ParentName.IsNullOrWhiteSpace()?null:eventData.Entity.ParentName,
                 $"L:{eventData.Entity.GroupName},{eventData.Entity.DisplayName}"), true);
             
         }
@@ -49,7 +50,7 @@ public class DynamicPermissionDefinitionHandler: ILocalEventHandler<EntityChange
             {
                 return;
             }
-            record.ParentName = eventData.Entity.ParentName;
+            record.ParentName = eventData.Entity.ParentName.IsNullOrWhiteSpace()?null:eventData.Entity.ParentName;
             record.IsEnabled = eventData.Entity.IsEnabled;
             record.DisplayName = $"L:{eventData.Entity.GroupName},{eventData.Entity.DisplayName}";
 
