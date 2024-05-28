@@ -1,6 +1,6 @@
 ﻿using Volo.Abp.Ui.Branding;
 
-namespace JS.Abp.DynamicPermission.Blazor.Host;
+namespace JS.Abp.DynamicPermission.Blazor.Host.Client;
 
 public class DynamicPermissionHostBrandingProvider : DefaultBrandingProvider
 {

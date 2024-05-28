@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Volo.Abp.Account.Localization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.UI.Navigation;
-using Volo.Abp.Account.Localization;
-namespace JS.Abp.DynamicPermission.Blazor.Host;
+
+namespace JS.Abp.DynamicPermission.Blazor.Host.Client;
 
 public class DynamicPermissionHostMenuContributor : IMenuContributor
 {

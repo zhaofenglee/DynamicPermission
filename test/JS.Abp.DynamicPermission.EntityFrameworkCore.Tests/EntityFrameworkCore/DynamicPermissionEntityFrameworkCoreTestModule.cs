@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
+using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.Uow;
@@ -14,6 +15,7 @@ namespace JS.Abp.DynamicPermission.EntityFrameworkCore;
     typeof(DynamicPermissionApplicationTestModule),
     typeof(DynamicPermissionEntityFrameworkCoreModule),
     typeof(AbpEntityFrameworkCoreSqliteModule),
+    typeof(AbpIdentityEntityFrameworkCoreModule),
     typeof(AbpPermissionManagementEntityFrameworkCoreModule)
 )]
 public class DynamicPermissionEntityFrameworkCoreTestModule : AbpModule
@@ -35,11 +37,15 @@ public class DynamicPermissionEntityFrameworkCoreTestModule : AbpModule
 
     private static SqliteConnection CreateDatabaseAndGetConnection()
     {
-        var connection = new SqliteConnection("Data Source=:memory:");
+        var connection = new AbpUnitTestSqliteConnection("Data Source=:memory:");
         connection.Open();
 
         new DynamicPermissionDbContext(
             new DbContextOptionsBuilder<DynamicPermissionDbContext>().UseSqlite(connection).Options
+        ).GetService<IRelationalDatabaseCreator>().CreateTables();
+
+        new IdentityDbContext(
+            new DbContextOptionsBuilder<IdentityDbContext>().UseSqlite(connection).Options
         ).GetService<IRelationalDatabaseCreator>().CreateTables();
         
         new PermissionManagementDbContext(

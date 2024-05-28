@@ -11,6 +11,8 @@ using Volo.Abp.Authorization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Caching;
 using Volo.Abp.Content;
+using Volo.Abp.Identity;
+using Volo.Abp.Identity.Integration;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.Users;
 using DistributedCacheEntryOptions = Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions;
@@ -20,13 +22,13 @@ namespace JS.Abp.DynamicPermission.UserPermissions;
 public class UserPermissionAppService:ApplicationService,IUserPermissionAppService
 {
     private readonly IDistributedCache<UserPermissionExcelDownloadTokenCacheItem, string> _excelDownloadTokenCache;
-    private readonly IExternalUserLookupServiceProvider _externalUserLookupServiceProvider;
+    private readonly IIdentityUserIntegrationService _identityUserIntegrationService;
     private readonly IPermissionAppService _permissionAppService;
-    public UserPermissionAppService(IExternalUserLookupServiceProvider externalUserLookupServiceProvider,
+    public UserPermissionAppService(IIdentityUserIntegrationService identityUserIntegrationService,
         IPermissionAppService permissionAppService,IDistributedCache<UserPermissionExcelDownloadTokenCacheItem, string> excelDownloadTokenCache
         )
     {
-        _externalUserLookupServiceProvider = externalUserLookupServiceProvider;
+        _identityUserIntegrationService = identityUserIntegrationService;
         _permissionAppService = permissionAppService;
         _excelDownloadTokenCache = excelDownloadTokenCache;
     }
@@ -52,19 +54,24 @@ public class UserPermissionAppService:ApplicationService,IUserPermissionAppServi
     
     private async Task<List<UserPermissionDto>> GetUserPermissionListAsync(GetUserPermissionInput input)
     {
-        var userList = await _externalUserLookupServiceProvider.SearchAsync(filter:input.FilterText);
-        if (!string.IsNullOrWhiteSpace(input.UserName))
+        var userList = await _identityUserIntegrationService.SearchAsync(new UserLookupSearchInputDto()
         {
-            userList = userList.Where(u => u.UserName.Contains(input.UserName)).ToList();
-        }
-        if (input.IsActive.HasValue)
+            Filter = input.FilterText
+        });
+        if (userList.Items.Any())
         {
-            userList = userList.Where(u => u.IsActive == input.IsActive).ToList();
-        }
-        if (userList.Any())
-        {
+            var items = userList.Items.ToList();
+            if (!string.IsNullOrWhiteSpace(input.UserName))
+            {
+                items = items.Where(u => u.UserName.Contains(input.UserName)).ToList();
+            }
+            if (input.IsActive.HasValue)
+            {
+                items = items.Where(u => u.IsActive == input.IsActive).ToList();
+            }
+
             List<UserPermissionDto> result = new List<UserPermissionDto>();
-            foreach (var user in userList)
+            foreach (var user in items)
             {
                 var permissions = await _permissionAppService.GetAsync("U",user.Id.ToString());
                 if (!string.IsNullOrWhiteSpace(input.GroupName))

@@ -2,12 +2,12 @@
 using System.Net.Http;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Account;
 using JS.Abp.DynamicPermission.Blazor.WebAssembly;
-using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic;
+using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
 using Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme;
 using Volo.Abp.Autofac.WebAssembly;
@@ -18,7 +18,7 @@ using Volo.Abp.SettingManagement.Blazor.WebAssembly;
 using Volo.Abp.TenantManagement.Blazor.WebAssembly;
 using Volo.Abp.UI.Navigation;
 
-namespace JS.Abp.DynamicPermission.Blazor.Host;
+namespace JS.Abp.DynamicPermission.Blazor.Host.Client;
 
 [DependsOn(
     typeof(AbpAutofacWebAssemblyModule),
@@ -29,7 +29,7 @@ namespace JS.Abp.DynamicPermission.Blazor.Host;
     typeof(AbpSettingManagementBlazorWebAssemblyModule),
     typeof(DynamicPermissionBlazorWebAssemblyModule)
 )]
-public class DynamicPermissionBlazorHostModule : AbpModule
+public class DynamicPermissionBlazorHostClientModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
@@ -40,7 +40,6 @@ public class DynamicPermissionBlazorHostModule : AbpModule
         ConfigureHttpClient(context, environment);
         ConfigureBlazorise(context);
         ConfigureRouter(context);
-        ConfigureUI(builder);
         ConfigureMenu(context);
         ConfigureAutoMapper(context);
     }
@@ -49,7 +48,7 @@ public class DynamicPermissionBlazorHostModule : AbpModule
     {
         Configure<AbpRouterOptions>(options =>
         {
-            options.AppAssembly = typeof(DynamicPermissionBlazorHostModule).Assembly;
+            options.AppAssembly = typeof(DynamicPermissionBlazorHostClientModule).Assembly;
         });
     }
 
@@ -77,11 +76,6 @@ public class DynamicPermissionBlazorHostModule : AbpModule
         });
     }
 
-    private static void ConfigureUI(WebAssemblyHostBuilder builder)
-    {
-        builder.RootComponents.Add<App>("#ApplicationContainer");
-    }
-
     private static void ConfigureHttpClient(ServiceConfigurationContext context, IWebAssemblyHostEnvironment environment)
     {
         context.Services.AddTransient(sp => new HttpClient
@@ -94,7 +88,7 @@ public class DynamicPermissionBlazorHostModule : AbpModule
     {
         Configure<AbpAutoMapperOptions>(options =>
         {
-            options.AddMaps<DynamicPermissionBlazorHostModule>();
+            options.AddMaps<DynamicPermissionBlazorHostClientModule>();
         });
     }
 }

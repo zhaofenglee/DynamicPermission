@@ -1,6 +1,6 @@
 ﻿using Volo.Abp.Bundling;
 
-namespace JS.Abp.DynamicPermission.Blazor.Host;
+namespace JS.Abp.DynamicPermission.Blazor.Host.Client;
 
 public class DynamicPermissionBlazorHostBundleContributor : IBundleContributor
 {

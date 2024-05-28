@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace JS.Abp.DynamicPermission.Blazor.Host;
+namespace JS.Abp.DynamicPermission.Blazor.Host.Client;
 
 public class DynamicPermissionBlazorHostAutoMapperProfile : Profile
 {

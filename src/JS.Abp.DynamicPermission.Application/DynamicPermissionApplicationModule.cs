@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Application;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 
@@ -11,7 +12,7 @@ namespace JS.Abp.DynamicPermission;
     typeof(DynamicPermissionApplicationContractsModule),
     typeof(AbpDddApplicationModule),
     typeof(AbpAutoMapperModule),
-    typeof(AbpPermissionManagementApplicationContractsModule)
+    typeof(AbpIdentityApplicationModule)
     )]
 public class DynamicPermissionApplicationModule : AbpModule
 {
