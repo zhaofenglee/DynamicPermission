@@ -8,7 +8,7 @@ public class DynamicPermissionPermissionDefinitionProvider : PermissionDefinitio
 {
     public override void Define(IPermissionDefinitionContext context)
     {
-        /*var myGroup = context.GetGroupOrNull(DynamicPermissionPermissions.GroupName);
+        var myGroup = context.GetGroupOrNull(DynamicPermissionPermissions.GroupName);
         if (myGroup == null)
         {
             myGroup = context.AddGroup(DynamicPermissionPermissions.GroupName, L("Permission:DynamicPermission"));
@@ -16,7 +16,7 @@ public class DynamicPermissionPermissionDefinitionProvider : PermissionDefinitio
             permissionDefinitionPermission.AddChild(DynamicPermissionPermissions.PermissionDefinitions.Create, L("Permission:Create"));
             permissionDefinitionPermission.AddChild(DynamicPermissionPermissions.PermissionDefinitions.Edit, L("Permission:Edit"));
             permissionDefinitionPermission.AddChild(DynamicPermissionPermissions.PermissionDefinitions.Delete, L("Permission:Delete"));
-        }*/
+        }
       
     }
 

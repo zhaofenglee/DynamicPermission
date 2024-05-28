@@ -1,4 +1,6 @@
-using System.Collections.Generic;
+// Using ABP Permissions does not require using seed data.
+
+/*using System.Collections.Generic;
 using System.Threading.Tasks;
 using JS.Abp.DynamicPermission.PermissionDefinitions;
 using Volo.Abp.Data;
@@ -41,4 +43,4 @@ public class DynamicPermissionDataSeedContributor: IDataSeedContributor, ITransi
             await _dynamicPermissionDefinitionRepository.InsertManyAsync(permissionExtras);
         }
     }
-}
+}*/
