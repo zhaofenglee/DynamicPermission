@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Blazorise.DataGrid;
 using JS.Abp.DynamicPermission.UserPermissions;
+using Microsoft.JSInterop;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Components.Web.Theming.PageToolbars;
 using Volo.Abp.BlazoriseUI.Components;
@@ -24,7 +27,8 @@ namespace JS.Abp.DynamicPermission.Blazor.Pages.DynamicPermission
         private string CurrentSorting { get; set; } = string.Empty;
         private int TotalCount { get; set; }
         private GetUserPermissionInput Filter { get; set; }
-        
+        [NotNull]
+        private IJSObjectReference? Module { get; set; }
         public UserPermissions()
         {
             Filter = new GetUserPermissionInput{
@@ -40,7 +44,20 @@ namespace JS.Abp.DynamicPermission.Blazor.Pages.DynamicPermission
             await SetToolbarItemsAsync();
             await SetBreadcrumbItemsAsync();
         }
-
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="firstRender"></param>
+        /// <returns></returns>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                // import JavaScript
+                Module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/JS.Abp.DynamicPermission.Blazor/Pages/DynamicPermission/UserPermissions.razor.js");
+                //await Module.InvokeVoidAsync("sayhello");
+            }
+        }
         protected virtual ValueTask SetBreadcrumbItemsAsync()
         {
             BreadcrumbItems.Add(new Volo.Abp.BlazoriseUI.BreadcrumbItem(L["Menu:UserPermissions"]));
@@ -86,14 +103,39 @@ namespace JS.Abp.DynamicPermission.Blazor.Pages.DynamicPermission
         private  async Task DownloadAsExcelAsync()
         {
             var token = (await UserPermissionAppService.GetDownloadTokenAsync()).Token;
-            var remoteService = await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("DynamicPermission") ??
-            await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            var culture = CultureInfo.CurrentUICulture.Name ?? CultureInfo.CurrentCulture.Name;
-            if(!culture.IsNullOrEmpty())
+          
+            var remoteStream = await UserPermissionAppService.GetListAsExcelFileAsync(new UserPermissionExcelDownloadDto()
+            { 
+                DownloadToken = token,
+                FilterText = Filter.FilterText,
+                GroupName = Filter.GroupName,
+                PermissionName              = Filter.PermissionName,
+                UserName = Filter.UserName,
+                IsActive = Filter.IsActive,
+                IsGranted = Filter.IsGranted
+
+            });
+
+            Stream stream = remoteStream.GetStream();
+            byte[] buffer = new byte[stream.Length];
+
+            stream.Read(buffer, 0, buffer.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            var fileStream = new MemoryStream(buffer);
+            var fileName = "UserPermissions.xlsx";
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
             {
-                culture = "&culture=" + culture;
+                await Module.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
             }
+            /*var remoteService = await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("DynamicPermission") ??
+                      await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
+                      var culture = CultureInfo.CurrentUICulture.Name ?? CultureInfo.CurrentCulture.Name;
+                      if(!culture.IsNullOrEmpty())
+                      {
+                          culture = "&culture=" + culture;
+                      }
             NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/dynamic-permission/user-permissions/as-excel-file?DownloadToken={token}&FilterText={Filter.FilterText}{culture}&GroupName={Filter.GroupName}&PermissionName={Filter.PermissionName}&UserName={Filter.UserName}&IsActive={Filter.IsActive}&IsGranted={Filter.IsGranted}", forceLoad: true);
+            */
         }
         
         protected virtual async Task OnGroupNameChangedAsync(string? groupName)

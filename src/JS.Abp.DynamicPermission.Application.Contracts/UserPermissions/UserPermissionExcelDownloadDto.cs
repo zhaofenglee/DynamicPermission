@@ -2,7 +2,7 @@ namespace JS.Abp.DynamicPermission.UserPermissions;
 
 public class UserPermissionExcelDownloadDto
 {
-    public string DownloadToken { get; set; }
+    public string DownloadToken { get; set; } = null!;
 
     public string? FilterText { get; set; }
     public string? GroupName { get; set; }

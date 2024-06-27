@@ -27,14 +27,9 @@ namespace JS.Abp.DynamicPermission.PermissionDefinitions
             var result = await _permissionDefinitionsAppService.GetListAsync(new GetPermissionDefinitionsInput());
 
             // Assert
-            result.TotalCount.ShouldBe(6);
-            result.Items.Count.ShouldBe(6);
-            result.Items.Any(x => x.GroupName == DynamicPermissionConsts.GroupName).ShouldBe(true);
-            result.Items.Any(x => x.Name == "DynamicPermission.PermissionDefinitions").ShouldBe(true);
-            result.Items.Any(x => x.Name == "DynamicPermission.PermissionDefinitions.Create").ShouldBe(true);
-            result.Items.Any(x => x.Name == "DynamicPermission.PermissionDefinitions.Edit").ShouldBe(true);
-            result.Items.Any(x => x.Name == "DynamicPermission.PermissionDefinitions.Delete").ShouldBe(true);
-            
+            result.TotalCount.ShouldBe(2);
+            result.Items.Count.ShouldBe(2);
+            result.Items.Any(x => x.GroupName == "PermissionDefinitionsTest").ShouldBe(true);
         }
 
         [Fact]

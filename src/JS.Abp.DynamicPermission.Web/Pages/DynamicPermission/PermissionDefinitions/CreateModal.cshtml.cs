@@ -28,7 +28,7 @@ namespace JS.Abp.DynamicPermission.Web.Pages.DynamicPermission.PermissionDefinit
         public virtual async Task OnGetAsync()
         {
             PermissionDefinition = new PermissionDefinitionCreateViewModel();
-            PermissionDefinition.GroupName = DynamicPermissionConsts.GroupName;
+            
             await Task.CompletedTask;
         }
 
