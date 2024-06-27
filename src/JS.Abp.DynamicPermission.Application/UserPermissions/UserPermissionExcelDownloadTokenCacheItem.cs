@@ -4,5 +4,5 @@ namespace JS.Abp.DynamicPermission.UserPermissions;
 [Serializable]
 public class UserPermissionExcelDownloadTokenCacheItem
 {
-    public string Token { get; set; }
+    public string Token { get; set; }= null!;
 }
