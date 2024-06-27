@@ -50,8 +50,14 @@ Open a command-line terminal in the directory of the YourProject.EntityFramework
 > dotnet ef database update
 ````
 
-### 5. Seed the initial data.
-After updating your database, you may need to seed your database with initial data.
+ 
+### 5. Add the following code to the `ConfigureServices` method in **YourProjectAuthServerHost.cs**.
+```csharp
+        context.Services.Configure<PermissionManagementOptions>(options =>
+        {
+            options.IsDynamicPermissionStoreEnabled = true;
+        });
+```
 
 ## Samples
 

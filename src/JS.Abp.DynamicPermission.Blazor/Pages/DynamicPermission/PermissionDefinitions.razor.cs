@@ -157,7 +157,7 @@ namespace JS.Abp.DynamicPermission.Blazor.Pages.DynamicPermission
         {
             NewPermissionDefinition = new PermissionDefinitionCreateDto{
                 
-                GroupName = DynamicPermissionConsts.GroupName,
+               
             };
             await NewPermissionDefinitionValidations.ClearAll();
             await CreatePermissionDefinitionModal.Show();

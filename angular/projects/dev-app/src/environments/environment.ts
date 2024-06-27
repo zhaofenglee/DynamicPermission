@@ -10,7 +10,7 @@ export const environment = {
     logoUrl: '',
   },
   oAuthConfig: {
-    issuer: 'https://localhost:44399/',
+    issuer: 'https://localhost:44349/',
     redirectUri: baseUrl,
     clientId: 'DynamicPermission_App',
     responseType: 'code',
@@ -19,11 +19,11 @@ export const environment = {
   },
   apis: {
     default: {
-      url: 'https://localhost:44399',
+      url: 'https://localhost:44349',
       rootNamespace: 'JS.Abp.DynamicPermission',
     },
     DynamicPermission: {
-      url: 'https://localhost:44344',
+      url: 'https://localhost:44397',
       rootNamespace: 'JS.Abp.DynamicPermission',
     },
   },
