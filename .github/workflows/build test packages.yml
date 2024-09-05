@@ -36,7 +36,7 @@ jobs:
           nuget sources update -Name MyNuGet -Source https://nuget.rxsoftware.cn/v3/index.json
           
       - name: dotnet restore
-        run: dotnet restore --configfile ${{github.workspace}}/NuGet.Config
+        run: dotnet restore 
 
       - name: dotnet build
         run: dotnet build -c Release
