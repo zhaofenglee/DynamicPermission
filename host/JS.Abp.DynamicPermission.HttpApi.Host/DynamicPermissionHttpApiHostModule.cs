@@ -16,6 +16,7 @@ using JS.Abp.DynamicPermission.MultiTenancy;
 using StackExchange.Redis;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
+using Volo.Abp.AspNetCore.Authentication.JwtBearer;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
@@ -45,6 +46,7 @@ namespace JS.Abp.DynamicPermission;
     typeof(DynamicPermissionEntityFrameworkCoreModule),
     typeof(DynamicPermissionHttpApiModule),
     typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
+    typeof(AbpAspNetCoreAuthenticationJwtBearerModule),
     typeof(AbpAutofacModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEntityFrameworkCoreSqlServerModule),
@@ -161,6 +163,7 @@ public class DynamicPermissionHttpApiHostModule : AbpModule
                     .AllowCredentials();
             });
         });
+
     }
 
     public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
@@ -179,7 +182,7 @@ public class DynamicPermissionHttpApiHostModule : AbpModule
 
         app.UseHttpsRedirection();
         app.UseCorrelationId();
-        app.UseStaticFiles();
+        app.MapAbpStaticAssets();
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();
