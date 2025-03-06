@@ -1,5 +1,9 @@
 ﻿# DynamicPermission
 
+* ABP now fully supports dynamic permission functionality. Reference link:
+https://abp.io/docs/latest/solution-templates/microservice/permission-management
+
+
 ![img.png](/docs/images/img.png)
 
 ![img2.png](/docs/images/img2.png)
